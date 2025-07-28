@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>EMI Calculator</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #121212;
+      color: #ffffff;
+      animation: backgroundAnimation 10s ease infinite;
+    }
+
+    @keyframes backgroundAnimation {
+      0% {
+        background: radial-gradient(circle, rgba(255, 0, 0, 0.4), rgba(0, 128, 128, 0.3));
+      }
+      50% {
+        background: radial-gradient(circle, rgba(0, 128, 255, 0.4), rgba(0, 0, 255, 0.3));
+      }
+      100% {
+        background: radial-gradient(circle, rgba(255, 0, 255, 0.4), rgba(0, 128, 128, 0.3));
+      }
+    }
+
+    .intro {
+      max-width: 700px;
+      text-align: center;
+      margin: 40px auto 20px;
+      padding: 0 20px;
+      animation: fadeIn 1s ease-in-out forwards;
+    }
+
+    .intro h1 {
+      font-size: 36px;
+      color: #4CAF50;
+      margin-bottom: 10px;
+    }
+
+    .intro p {
+      font-size: 16px;
+      color: #000;
+      line-height: 1.6;
+    }
+
+    .container {
+      background: #1e1e1e;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      padding: 30px;
+      margin: 0 auto 40px;
+      box-sizing: border-box;
+      animation: fadeIn 1s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h2 {
+      text-align: center;
+      color: #4CAF50;
+      margin-bottom: 20px;
+      animation: slideIn 1s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(-100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .input-group {
+      margin: 10px 0;
+    }
+
+    input[type="number"],
+    select,
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 2px solid #444;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      background-color: #333;
+      color: #fff;
+      transition: all 0.3s ease;
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="number"]:focus,
+    select:focus,
+    button:focus {
+      border-color: #4CAF50;
+      transform: scale(1.02);
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+      transform: scale(1.05);
+    }
+
+    .currency-select,
+    .tenure-unit {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+      border: 2px solid #444;
+      border-radius: 8px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .result {
+      background: #2b2b2b;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      text-align: center;
+      opacity: 0;
+      animation: resultFadeIn 1s ease-out forwards;
+    }
+
+    @keyframes resultFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .result h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #4CAF50;
+    }
+
+    .result p {
+      font-size: 16px;
+      margin: 5px 0;
+    }
+
+    .radio-group {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .radio-group input[type="radio"] {
+      accent-color: #4CAF50;
+    }
+
+    .radio-group label {
+      color: #ddd;
+    }
+
+    footer {
+      text-align: center;
+      color: #bbb;
+      font-size: 14px;
+      padding: 20px;
+      opacity: 0.8;
+    }
+
+    footer a {
+      color: #000;
+      text-decoration: none;
+      margin: 0 10px;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding-top: 60px;
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      background-color: #2b2b2b;
+      padding: 20px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 700px;
+      margin: auto;
+      color: #fff;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+    }
+
+    .close {
+      color: #bbb;
+      font-size: 30px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #fff;
+    }
+
+    .modal-body {
+      text-align: left;
+      font-size: 16px;
+      line-height: 1.6;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        width: 90%;
+        max-width: 480px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 15px;
+        width: 90%;
+        max-width: 400px;
+      }
+
+      footer {
+        font-size: 12px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      input[type="number"],
+      select,
+      button {
+        padding: 8px;
+        font-size: 14px;
+      }
+
+      .result p {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="intro">
+    <h1>EMI Calculator</h1>
+    <p>Calculate your monthly loan repayments quickly and easily. Just enter the loan amount, interest rate, and tenure, and get your EMI, total interest, and total repayment instantly.</p>
+  </div>
+
+  <div class="container">
+    <h2>EMI Calculator</h2>
+
+    <div class="input-group">
+      <div style="display: flex; align-items: center;">
+        <select id="currency" class="currency-select">
+          <option value="₹">₹ INR</option>
+          <option value="$">$ USD</option>
+          <option value="€">€ EUR</option>
+          <option value="£">£ GBP</option>
+          <option value="¥">¥ JPY</option>
+        </select>
+        <input id="amount" type="number" placeholder="Loan Amount" style="margin-left: 10px; flex-grow: 1;" />
+      </div>
+    </div>
+
+    <div class="input-group">
+      <input id="rate" type="number" placeholder="Interest Rate (%)" />
+    </div>
+
+    <div class="input-group">
+      <input id="tenure" type="number" placeholder="Loan Tenure" />
+    </div>
+
+    <div class="input-group">
+      <div class="radio-group">
+        <label><input type="radio" name="tenure-unit" value="months" checked /> Months</label>
+        <label><input type="radio" name="tenure-unit" value="years" /> Years</label>
+      </div>
+    </div>
+
+    <button onclick="calculateEMI()">Calculate</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <footer>
+    <p>
+      <a href="javascript:void(0);" onclick="openModal('privacyModal')">Privacy Policy</a> |
+      <a href="javascript:void(0);" onclick="openModal('disclaimerModal')">Disclaimer</a>
+    </p>
+  </footer>
+
+  <!-- Privacy Policy Modal -->
+ <!-- Privacy Policy Modal Section -->
+<div id="privacyModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Privacy Policy</h2>
+      <span class="close" onclick="closeModal('privacyModal')">&times;</span>
+    </div>
+    <div class="modal-body">
+      <p><strong>Privacy Policy</strong></p>
+
+      <p>At EMI Calculator (<a href="https://yourusername.github.io/emi-calculator/" target="_blank" style="color: #4CAF50;">https://yourusername.github.io/emi-calculator/</a>), we take your privacy seriously. This Privacy Policy outlines the types of personal information we collect and how we use, store, and protect it.</p>
+
+      <p><strong>Information We Collect</strong><br>
+      We do not collect any personal data from users. This website is a simple EMI calculator tool that functions entirely on the client side. No form submissions or personal inputs are stored or transmitted to any server.</p>
+
+      <p><strong>Use of Cookies</strong><br>
+      This website may use third-party services such as Google AdSense, which may use cookies to serve personalized ads based on your previous interactions. You can manage cookie preferences through your browser settings.</p>
+
+      <p><strong>Third-Party Ads</strong><br>
+      We use Google AdSense to display ads. Google may use cookies or web beacons to personalize the ads shown to users based on their visits to this and other websites. For more information, please visit <a href="https://policies.google.com/privacy" target="_blank" style="color: #4CAF50;">Google’s Privacy & Terms</a>.</p>
+
+      <p><strong>Links to Other Sites</strong><br>
+      This site may contain links to external websites. We are not responsible for the content or privacy practices of those websites.</p>
+
+      <p><strong>Changes to This Policy</strong><br>
+      We may update this Privacy Policy occasionally. Please check this page regularly to stay informed.</p>
+
+      <p><strong>Contact Us</strong><br>
+      If you have any questions or concerns about this Privacy Policy, you can contact us at: <p><a href="mailto:shauryakujur10@gmail.com" style="color: #4CAF50;">shauryakujur10@gmail.com</a></p>
+
+      <p><strong>Thankyou...</strong><br>
+      Thankyou...</a></p>
+
+    </div>
+  </div>
+</div>
+
+  <!-- Disclaimer Modal -->
+  <div id="disclaimerModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Disclaimer</h2>
+        <span class="close" onclick="closeModal('disclaimerModal')">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p><strong>Disclaimer</strong></p>
+        <p>The EMI results provided by this calculator are for informational and estimation purposes only. They are based on user inputs and general formulas, and may not reflect the actual terms provided by financial institutions.</p>
+        <p>While we strive for accuracy, we make no guarantees regarding the precision or applicability of the calculated results to your specific situation.</p>
+        <p><strong>Users are strongly encouraged</strong> to consult with certified financial advisors, banks, or loan officers before making any financial decisions based on the output of this tool.</p>
+        <p>By using this calculator, you acknowledge that the creators are not responsible for any decisions made based on the calculated EMI, total interest, or repayment values.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calculateEMI() {
+      let P = parseFloat(document.getElementById('amount').value);
+      let annualRate = parseFloat(document.getElementById('rate').value);
+      let N = parseInt(document.getElementById('tenure').value);
+      let currency = document.getElementById('currency').value;
+      let tenureUnit = document.querySelector('input[name="tenure-unit"]:checked').value;
+
+      if (tenureUnit === "years") N *= 12;
+      let R = annualRate / 12 / 100;
+      let EMI = (P * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1);
+      let total = EMI * N;
+      let interest = total - P;
+
+      document.getElementById('result').innerHTML = `
+        <h3>EMI Details</h3>
+        <p>Monthly EMI: ${currency}${EMI.toFixed(2)}</p>
+        <p>Total Payable: ${currency}${total.toFixed(2)}</p>
+        <p>Interest Payable: ${currency}${interest.toFixed(2)}</p>
+      `;
+    }
+
+    function openModal(id) {
+      document.getElementById(id).style.display = 'block';
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+      const modals = document.querySelectorAll(".modal");
+      modals.forEach(modal => {
+        if (event.target === modal) {
+          modal.style.display = "none";
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
+
